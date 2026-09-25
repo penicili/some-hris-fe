@@ -1,3 +1,5 @@
+import { COMPANY_NAME } from "@/lib/config";
+
 export default function Home() {
   return (
     <div className="flex min-h-screen flex-col bg-background text-foreground">
@@ -39,7 +41,7 @@ export default function Home() {
 
       <footer className="border-t border-border bg-surface">
         <div className="mx-auto max-w-5xl px-6 py-6 text-xs text-muted-foreground">
-          PT Maju Kapan Yah
+          {COMPANY_NAME}
         </div>
       </footer>
     </div>

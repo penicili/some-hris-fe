@@ -1,6 +1,7 @@
 import Image from "next/image";
 import type { ReactNode } from "react";
 import Link from "next/link";
+import { COMPANY_NAME } from "@/lib/config";
 
 type AuthLayoutUIProps = {
   children: ReactNode;
@@ -14,7 +15,7 @@ function AuthVisual({ src, alt }: { src: string; alt: string }) {
     <div className="relative min-h-[360px] overflow-hidden bg-surface-muted sm:min-h-[440px] lg:min-h-screen">
       <Image
         alt={alt}
-        className="object-contain p-8 sm:p-12"
+        className="object-contain p-16 sm:p-20 lg:p-24"
         fill
         priority
         sizes="(min-width: 1024px) 50vw, 100vw"
@@ -26,7 +27,7 @@ function AuthVisual({ src, alt }: { src: string; alt: string }) {
 
 function FormPanel({ children }: { children: ReactNode }) {
   return (
-    <div className="flex min-h-[560px] flex-col bg-surface px-6 py-7 sm:px-10 lg:min-h-screen lg:px-16 lg:py-10 xl:px-24">
+    <div className="flex min-h-[560px] flex-col bg-surface px-6 py-7 sm:px-10 lg:min-h-screen lg:px-16 lg:py-8 xl:px-24">
       <div className="mx-auto flex w-full max-w-[470px] flex-1 flex-col">
         <div className="flex justify-end">
           <Link
@@ -43,10 +44,10 @@ function FormPanel({ children }: { children: ReactNode }) {
           </Link>
         </div>
 
-        <div className="flex flex-1 items-center py-10 lg:py-12">{children}</div>
+        <div className="flex flex-1 items-center py-10 lg:py-8">{children}</div>
 
         <p className="text-center text-xs text-muted-foreground">
-          © 2026 PT Maju Kapan Yah
+          © 2026 {COMPANY_NAME}
         </p>
       </div>
     </div>

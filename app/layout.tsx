@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { IBM_Plex_Mono, IBM_Plex_Sans } from "next/font/google";
+import { COMPANY_NAME } from "@/lib/config";
 import "./globals.css";
 
 const ibmPlexSans = IBM_Plex_Sans({
@@ -16,7 +17,7 @@ const ibmPlexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "HRIS PT. Maju Kapan Yah",
+  title: `HRIS | ${COMPANY_NAME}`,
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

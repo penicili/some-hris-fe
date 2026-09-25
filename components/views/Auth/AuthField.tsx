@@ -9,6 +9,7 @@ type AuthFieldProps = {
   type?: HTMLInputTypeAttribute;
   autoComplete?: string;
   required?: boolean;
+  error?: string;
 };
 
 function FieldIcon({ name }: { name: AuthFieldProps["icon"] }) {
@@ -93,6 +94,7 @@ export default function AuthField({
   type = "text",
   autoComplete,
   required = true,
+  error,
 }: AuthFieldProps) {
   return (
     <div>
@@ -107,6 +109,8 @@ export default function AuthField({
           <FieldIcon name={icon} />
         </span>
         <input
+          aria-describedby={error ? `${id}-error` : undefined}
+          aria-invalid={error ? true : undefined}
           autoComplete={autoComplete}
           className="h-12 w-full rounded-xl border border-border bg-surface pl-11 pr-4 text-sm text-foreground outline-none transition placeholder:text-muted-foreground/70 focus:border-primary focus:ring-4 focus:ring-primary/10"
           id={id}
@@ -116,6 +120,15 @@ export default function AuthField({
           type={type}
         />
       </div>
+      {error && (
+        <p
+          className="mt-2 text-xs text-red-700"
+          id={`${id}-error`}
+          role="alert"
+        >
+          {error}
+        </p>
+      )}
     </div>
   );
 }
