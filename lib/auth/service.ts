@@ -11,6 +11,9 @@ import type { AuthServiceResult } from "./types";
  *
  * The token is returned to the Server Action, which stores it in an
  * HTTP-only cookie. It is never returned to the browser component.
+ *
+ * TODO(auth): Add a getCurrentUser() request for GET /api/auth/me. It should
+ * send getAuthHeaders() to the backend and return the user claims on success.
  */
 
 const loginResponseSchema = z.object({

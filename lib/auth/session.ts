@@ -6,6 +6,10 @@ import { cookies } from "next/headers";
  * The token is kept in an HTTP-only cookie so browser JavaScript cannot read
  * or modify it. The backend remains the token issuer/verifier; this frontend
  * only stores the token and can forward it to protected backend endpoints.
+ *
+ * TODO(auth): Add getCurrentUser() and requireUser() after the backend adds
+ * GET /api/auth/me. The root page should use requireUser() instead of only
+ * checking whether the cookie exists.
  */
 
 export const AUTH_COOKIE_NAME = "hris_access_token";

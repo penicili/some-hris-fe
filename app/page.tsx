@@ -1,8 +1,27 @@
+import { redirect } from "next/navigation";
+import { getAuthToken } from "@/lib/auth/session";
 import { COMPANY_NAME } from "@/lib/config";
+import LogoutButton from "@/components/views/Auth/LogoutButton";
 
-export default function Home() {
+export default async function Home() {
+  // Temporary frontend protection: a JWT cookie is required. The backend
+  // remains responsible for validating the token on authenticated requests.
+  // TODO(auth): Replace this token-presence check with requireUser() after the
+  // backend exposes GET /api/auth/me.
+  const token = await getAuthToken();
+
+  if (!token) {
+    redirect("/login");
+  }
+
   return (
     <div className="flex min-h-screen flex-col bg-background text-foreground">
+      <header className="border-b border-border bg-surface">
+        <div className="mx-auto flex max-w-5xl items-center justify-end px-6 py-4">
+          <LogoutButton />
+        </div>
+      </header>
+
       <main className="flex-1">
         <section className="mx-auto max-w-5xl px-6 py-20 md:py-28">
           <h1 className="max-w-3xl text-3xl font-bold tracking-tight sm:text-4xl">
