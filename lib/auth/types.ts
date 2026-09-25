@@ -5,7 +5,7 @@
  * Server Actions and read by Client Components through useActionState.
  */
 
-export type AuthField = "name" | "email" | "password" | "terms";
+export type AuthField = "name" | "email" | "password";
 
 export type AuthFieldErrors = Partial<Record<AuthField, string>>;
 
@@ -22,6 +22,7 @@ export const initialAuthState: AuthState = {
 export type AuthServiceResult =
   | {
       ok: true;
+      accessToken?: string;
       redirectTo?: string;
     }
   | {

@@ -22,7 +22,7 @@ This project uses [`next/font`](https://nextjs.org/docs/app/building-your-applic
 
 ## Environment
 
-Copy `.env.example` to `.env.local` and set `NEXT_PUBLIC_COMPANY_NAME` to your company name.
+Copy `.env.example` to `.env.local` and set `NEXT_PUBLIC_COMPANY_NAME` and `BACKEND_URL` for your environment. `BACKEND_URL` is the base URL of the backend server; the frontend calls `/api/auth/login` and `/api/auth/register` on it.
 
 ## Learn More
 

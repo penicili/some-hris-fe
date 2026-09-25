@@ -2,47 +2,21 @@ import { z } from "zod";
 import type { AuthFieldErrors } from "./types";
 
 /**
- * Keep authentication rules in this module so the same validation can be
- * reused by Server Actions, tests, and any future client-side validation.
- * The Server Action remains the source of truth; browser attributes are only
- * an early usability layer.
+ * Frontend validation mirrors the backend auth contract.
+ *
+ * These schemas are still validated on the server inside the Server Action;
+ * the browser only uses required/type attributes for immediate feedback.
  */
 
-const emailSchema = z
-  .string()
-  .trim()
-  .toLowerCase()
-  .pipe(z.email("Enter a valid email address."));
-
-const registrationPasswordSchema = z
-  .string()
-  .min(8, { error: "Password must be at least 8 characters." })
-  .max(128, { error: "Password must be 128 characters or fewer." })
-  .regex(/[A-Za-z]/, {
-    error: "Password must contain at least one letter.",
-  })
-  .regex(/[0-9]/, {
-    error: "Password must contain at least one number.",
-  });
-
 export const loginSchema = z.object({
-  email: emailSchema,
-  // Do not apply registration rules when signing in. Existing users may have
-  // passwords created under an older policy.
+  email: z.email("Enter a valid email address."),
   password: z.string().min(1, { error: "Enter your password." }),
 });
 
 export const registerSchema = z.object({
-  name: z
-    .string()
-    .trim()
-    .min(2, { error: "Name must be at least 2 characters." })
-    .max(100, { error: "Name must be 100 characters or fewer." }),
-  email: emailSchema,
-  password: registrationPasswordSchema,
-  acceptedTerms: z.literal(true, {
-    error: "You must accept the Terms of Service and Privacy Policy.",
-  }),
+  name: z.string().min(1, { error: "Enter your name." }),
+  email: z.email("Enter a valid email address."),
+  password: z.string().min(8, { error: "Password must be at least 8 characters." }),
 });
 
 export type LoginInput = z.infer<typeof loginSchema>;
@@ -75,7 +49,7 @@ export function validateLoginInput(input: unknown): ValidationResult<LoginInput>
   };
 }
 
-/** Parse and normalize registration data received from FormData. */
+/** Parse registration data received from FormData. */
 export function validateRegisterInput(
   input: unknown,
 ): ValidationResult<RegisterInput> {
@@ -101,14 +75,8 @@ function toFieldErrors(error: z.ZodError): AuthFieldErrors {
   for (const issue of error.issues) {
     const field = issue.path[0];
 
-    if (
-      field === "name" ||
-      field === "email" ||
-      field === "password" ||
-      field === "acceptedTerms"
-    ) {
-      const key = field === "acceptedTerms" ? "terms" : field;
-      fieldErrors[key] ??= issue.message;
+    if (field === "name" || field === "email" || field === "password") {
+      fieldErrors[field] ??= issue.message;
     }
   }
 

@@ -2,6 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { validateLoginInput, validateRegisterInput } from "@/lib/auth/schema";
+import { clearAuthCookie, setAuthCookie } from "@/lib/auth/session";
 import { loginWithApi, registerWithApi } from "@/lib/auth/service";
 import type { AuthState } from "@/lib/auth/types";
 
@@ -38,8 +39,15 @@ export async function login(
     };
   }
 
-  // TODO: Set the secure session cookie here if your auth provider does not
-  // do it inside loginWithApi.
+  if (!result.accessToken) {
+    return {
+      status: "error",
+      message: "The authentication service did not return a token.",
+    };
+  }
+
+  await setAuthCookie(result.accessToken);
+
   if (result.redirectTo) {
     redirect(result.redirectTo);
   }
@@ -56,7 +64,6 @@ export async function register(
     name: readText(formData, "name"),
     email: readText(formData, "email"),
     password: readText(formData, "password"),
-    acceptedTerms: formData.get("terms") === "on",
   });
 
   if (!validation.success) {
@@ -76,12 +83,19 @@ export async function register(
     };
   }
 
-  // TODO: Set the session or redirect the new user to onboarding here.
+  // The backend register endpoint does not issue a JWT, so send the new user
+  // to login to authenticate and receive their token.
   if (result.redirectTo) {
     redirect(result.redirectTo);
   }
 
   return { status: "success" };
+}
+
+/** Clear the local JWT cookie when the user logs out. */
+export async function logout(): Promise<void> {
+  await clearAuthCookie();
+  redirect("/login");
 }
 
 function readText(formData: FormData, key: string): string {
