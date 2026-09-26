@@ -28,10 +28,10 @@ Copy `.env.example` to `.env.local` and set `NEXT_PUBLIC_COMPANY_NAME` and `BACK
 
 ## Authentication TODO
 
-- [ ] Add `GET /api/auth/me` to the backend and protect it with the existing JWT middleware.
-- [ ] Return the authenticated user claims: `{ userId: number, role: string }`.
-- [ ] Add `getCurrentUser()` in `lib/auth/service.ts` using the JWT bearer header.
-- [ ] Add `requireUser()` in `lib/auth/session.ts` and replace the temporary token-presence check in `app/page.tsx`.
+- [x] Add `GET /api/auth/me` to the backend and protect it with the existing JWT middleware.
+- [x] Return the authenticated user claims and user profile.
+- [x] Add `getCurrentUser()` in `lib/auth/session.ts` using the JWT bearer header.
+- [x] Add `requireUser()` in `lib/auth/session.ts` and replace the temporary token-presence check in `app/page.tsx`.
 - [ ] Add role-based authorization checks for protected pages and Server Actions.
 - [ ] Test missing, malformed, expired, and valid tokens.
 

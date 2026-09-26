@@ -7,6 +7,13 @@
 
 export type AuthField = "name" | "email" | "password";
 
+export type AuthUser = {
+  id: number;
+  email: string;
+  name: string;
+  role: string;
+};
+
 export type AuthFieldErrors = Partial<Record<AuthField, string>>;
 
 export type AuthState = {

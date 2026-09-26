@@ -1,18 +1,10 @@
-import { redirect } from "next/navigation";
-import { getAuthToken } from "@/lib/auth/session";
+import { requireUser } from "@/lib/auth/session";
 import { COMPANY_NAME } from "@/lib/config";
 import LogoutButton from "@/components/views/Auth/LogoutButton";
 
 export default async function Home() {
-  // Temporary frontend protection: a JWT cookie is required. The backend
-  // remains responsible for validating the token on authenticated requests.
-  // TODO(auth): Replace this token-presence check with requireUser() after the
-  // backend exposes GET /api/auth/me.
-  const token = await getAuthToken();
-
-  if (!token) {
-    redirect("/login");
-  }
+  // The backend validates the JWT before the protected page is rendered.
+  await requireUser();
 
   return (
     <div className="flex min-h-screen flex-col bg-background text-foreground">
