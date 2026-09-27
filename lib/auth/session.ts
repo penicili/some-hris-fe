@@ -1,5 +1,6 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { cache } from "react";
 import { z } from "zod";
 import { getEndpoint } from "@/lib/auth/service";
 import type { AuthUser } from "@/lib/auth/types";
@@ -57,8 +58,13 @@ export async function clearAuthCookie(): Promise<void> {
   cookieStore.delete(AUTH_COOKIE_NAME);
 }
 
-/** Ask the backend to validate the JWT and return the current user. */
-export async function getCurrentUser(): Promise<AuthUser | null> {
+/**
+ * Ask the backend to validate the JWT and return the current user.
+ *
+ * Wrapped in React's `cache` so a layout and a page that both need the user
+ * share one request per render pass instead of calling /auth/me twice.
+ */
+export const getCurrentUser = cache(async (): Promise<AuthUser | null> => {
   const headers = await getAuthHeaders();
 
   if (!headers.Authorization) {
@@ -88,7 +94,7 @@ export async function getCurrentUser(): Promise<AuthUser | null> {
   } catch {
     return null;
   }
-}
+});
 
 /** Require a backend-validated user before rendering a protected page. */
 export async function requireUser(): Promise<AuthUser> {
