@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hris-fe
+  namespace: hrisapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hris-fe
+  template:
+    metadata:
+      labels:
+        app: hris-fe
+    spec:
+      containers:
+      - name: hris-fe
+        image: penicili/hris-anu-fe:lts
+        ports:
+          - containerPort: 3000
+        env:
+          - name: NEXT_PUBLIC_COMPANY_NAME
+            value:  PT Maju Kapan Yah
+          - name: BACKEND_URL
+            value: localhost:5000
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name:  hris-fe
+spec:
+  selector:
+    app:  hris-fe
+  type: ClusterIP
+  ports:
+  - port:  80
+    targetPort:  3000
