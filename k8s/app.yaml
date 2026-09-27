@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: hris-fe
-        image: penicili/hris-anu-fe:lts
+        image: penicili/hris-anu-fe:3f92489
         ports:
           - containerPort: 3000
         env:
@@ -28,6 +28,7 @@ kind: Service
 apiVersion: v1
 metadata:
   name:  hris-fe
+  namespace: hrisapp
 spec:
   selector:
     app:  hris-fe
