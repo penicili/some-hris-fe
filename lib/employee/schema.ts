@@ -1,5 +1,11 @@
 import { z } from "zod";
-import type { AssignUserFieldErrors } from "./types";
+import type {
+  AssignUserFieldErrors,
+  CreateEmployeeField,
+  CreateEmployeeFieldErrors,
+  UpdateEmployeeField,
+  UpdateEmployeeFieldErrors,
+} from "./types";
 
 /**
  * Mirrors the backend `Employee` model (prisma/schema.prisma).
@@ -112,6 +118,216 @@ function toFieldErrors(error: z.ZodError): AssignUserFieldErrors {
 
     if (field === "nik" || field === "fullName" || field === "userId") {
       fieldErrors[field] ??= issue.message;
+    }
+  }
+
+  return fieldErrors;
+}
+
+/**
+ * Form input for the create-employee action.
+ *
+ * All values arrive as strings from FormData; numbers are coerced here.
+ * `employment` and `departmentId` are optional — an empty string means "not set".
+ */
+export const createEmployeeSchema = z.object({
+  nik: z.string().trim().min(1, { error: "Masukkan NIK karyawan." }),
+  fullName: z
+    .string()
+    .trim()
+    .min(1, { error: "Masukkan nama lengkap karyawan." }),
+  hireDate: z.string().min(1, { error: "Masukkan tanggal bergabung." }),
+  status: z.enum(["active", "on_leave", "resigned"], {
+    error: "Pilih status karyawan.",
+  }),
+  salary: z.coerce
+    .number({ error: "Masukkan gaji berupa angka." })
+    .int("Gaji harus berupa bilangan bulat.")
+    .positive("Gaji harus lebih besar dari 0."),
+  employment: z
+    .enum(["permanent", "contract", "probation", "intern"])
+    .optional(),
+  departmentId: z.coerce
+    .number({ error: "Masukkan id departemen berupa angka." })
+    .int("Id departemen harus berupa bilangan bulat.")
+    .positive("Id departemen harus lebih besar dari 0.")
+    .optional(),
+  positionId: z.coerce
+    .number({ error: "Masukkan id jabatan berupa angka." })
+    .int("Id jabatan harus berupa bilangan bulat.")
+    .positive("Id jabatan harus lebih besar dari 0."),
+});
+
+export type CreateEmployeeInput = {
+  nik: string;
+  fullName: string;
+  hireDate: string;
+  status: "active" | "on_leave" | "resigned";
+  salary: number;
+  employment?: "permanent" | "contract" | "probation" | "intern";
+  departmentId?: number;
+  positionId: number;
+};
+
+export type CreateEmployeeValidationResult =
+  | { success: true; data: CreateEmployeeInput }
+  | { success: false; fieldErrors: CreateEmployeeFieldErrors };
+
+export function validateCreateEmployeeInput(input: {
+  nik: string;
+  fullName: string;
+  hireDate: string;
+  status: string;
+  salary: string;
+  employment?: string;
+  departmentId?: string;
+  positionId: string;
+}): CreateEmployeeValidationResult {
+  const result = createEmployeeSchema.safeParse({
+    nik: input.nik,
+    fullName: input.fullName,
+    hireDate: input.hireDate,
+    status: input.status,
+    salary: input.salary,
+    employment: input.employment || undefined,
+    departmentId: input.departmentId || undefined,
+    positionId: input.positionId,
+  });
+
+  if (!result.success) {
+    return {
+      success: false,
+      fieldErrors: toCreateEmployeeFieldErrors(result.error),
+    };
+  }
+
+  return { success: true, data: result.data };
+}
+
+/**
+ * Form input for the update-employee action.
+ *
+ * Every field is optional — the backend only changes what it receives.
+ * `employment` and `departmentId` use nullish so an empty string clears them.
+ */
+export const updateEmployeeSchema = z.object({
+  fullName: z
+    .string()
+    .trim()
+    .min(1, { error: "Masukkan nama lengkap karyawan." })
+    .optional(),
+  hireDate: z.string().min(1, { error: "Masukkan tanggal bergabung." }).optional(),
+  status: z
+    .enum(["active", "on_leave", "resigned"], {
+      error: "Pilih status karyawan.",
+    })
+    .optional(),
+  salary: z.coerce
+    .number({ error: "Masukkan gaji berupa angka." })
+    .int("Gaji harus berupa bilangan bulat.")
+    .positive("Gaji harus lebih besar dari 0.")
+    .optional(),
+  employment: z
+    .enum(["permanent", "contract", "probation", "intern"])
+    .nullish(),
+  departmentId: z.coerce
+    .number({ error: "Masukkan id departemen berupa angka." })
+    .int("Id departemen harus berupa bilangan bulat.")
+    .positive("Id departemen harus lebih besar dari 0.")
+    .nullish(),
+  positionId: z.coerce
+    .number({ error: "Masukkan id jabatan berupa angka." })
+    .int("Id jabatan harus berupa bilangan bulat.")
+    .positive("Id jabatan harus lebih besar dari 0.")
+    .optional(),
+});
+
+export type UpdateEmployeeInput = {
+  fullName?: string;
+  hireDate?: string;
+  status?: "active" | "on_leave" | "resigned";
+  salary?: number;
+  employment?: "permanent" | "contract" | "probation" | "intern" | null;
+  departmentId?: number | null;
+  positionId?: number;
+};
+
+export type UpdateEmployeeValidationResult =
+  | { success: true; data: UpdateEmployeeInput }
+  | { success: false; fieldErrors: UpdateEmployeeFieldErrors };
+
+export function validateUpdateEmployeeInput(input: {
+  fullName: string;
+  hireDate: string;
+  status: string;
+  salary: string;
+  employment?: string;
+  departmentId?: string;
+  positionId: string;
+}): UpdateEmployeeValidationResult {
+  const result = updateEmployeeSchema.safeParse({
+    fullName: input.fullName || undefined,
+    hireDate: input.hireDate || undefined,
+    status: input.status || undefined,
+    salary: input.salary || undefined,
+    employment: input.employment || undefined,
+    departmentId: input.departmentId || undefined,
+    positionId: input.positionId || undefined,
+  });
+
+  if (!result.success) {
+    return {
+      success: false,
+      fieldErrors: toUpdateEmployeeFieldErrors(result.error),
+    };
+  }
+
+  return { success: true, data: result.data };
+}
+
+function toCreateEmployeeFieldErrors(
+  error: z.ZodError,
+): CreateEmployeeFieldErrors {
+  const fields = [
+    "nik",
+    "fullName",
+    "hireDate",
+    "status",
+    "salary",
+    "employment",
+    "departmentId",
+    "positionId",
+  ] as const;
+  const fieldErrors: CreateEmployeeFieldErrors = {};
+
+  for (const issue of error.issues) {
+    const field = issue.path[0];
+    if (fields.includes(field as (typeof fields)[number])) {
+      fieldErrors[field as CreateEmployeeField] ??= issue.message;
+    }
+  }
+
+  return fieldErrors;
+}
+
+function toUpdateEmployeeFieldErrors(
+  error: z.ZodError,
+): UpdateEmployeeFieldErrors {
+  const fields = [
+    "fullName",
+    "hireDate",
+    "status",
+    "salary",
+    "employment",
+    "departmentId",
+    "positionId",
+  ] as const;
+  const fieldErrors: UpdateEmployeeFieldErrors = {};
+
+  for (const issue of error.issues) {
+    const field = issue.path[0];
+    if (fields.includes(field as (typeof fields)[number])) {
+      fieldErrors[field as UpdateEmployeeField] ??= issue.message;
     }
   }
 

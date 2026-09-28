@@ -94,6 +94,9 @@ function EmployeeTable({ employees }: { employees: Employee[] }) {
               <th className="px-5 py-3 font-semibold" scope="col">
                 Status
               </th>
+              <th className="px-5 py-3 font-semibold" scope="col">
+                <span className="sr-only">Aksi</span>
+              </th>
             </tr>
           </thead>
 
@@ -125,6 +128,14 @@ function EmployeeTable({ employees }: { employees: Employee[] }) {
                   >
                     {statusLabels[employee.status]}
                   </span>
+                </td>
+                <td className="px-5 py-4 text-right">
+                  <Link
+                    className="text-sm font-medium text-primary transition-colors hover:text-primary-hover"
+                    href={`/karyawan/ubah/${employee.id}`}
+                  >
+                    Ubah
+                  </Link>
                 </td>
               </tr>
             ))}

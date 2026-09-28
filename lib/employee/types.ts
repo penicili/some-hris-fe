@@ -71,3 +71,53 @@ export type AssignUserState = {
 export const initialAssignUserState: AssignUserState = {
   status: "idle",
 };
+
+export type CreateEmployeeField =
+  | "nik"
+  | "fullName"
+  | "hireDate"
+  | "status"
+  | "salary"
+  | "employment"
+  | "departmentId"
+  | "positionId";
+
+export type UpdateEmployeeField =
+  | "fullName"
+  | "hireDate"
+  | "status"
+  | "salary"
+  | "employment"
+  | "departmentId"
+  | "positionId";
+
+export type CreateEmployeeFieldErrors = Partial<Record<CreateEmployeeField, string>>;
+export type UpdateEmployeeFieldErrors = Partial<Record<UpdateEmployeeField, string>>;
+
+export type CreateEmployeeState = {
+  status: "idle" | "error" | "success";
+  message?: string;
+  fieldErrors?: CreateEmployeeFieldErrors;
+};
+
+export type UpdateEmployeeState = {
+  status: "idle" | "error" | "success";
+  message?: string;
+  fieldErrors?: UpdateEmployeeFieldErrors;
+};
+
+export const initialCreateEmployeeState: CreateEmployeeState = {
+  status: "idle",
+};
+
+export const initialUpdateEmployeeState: UpdateEmployeeState = {
+  status: "idle",
+};
+
+export type CreateEmployeeResult =
+  | { ok: true; employee: Employee }
+  | { ok: false; status: number; message: string };
+
+export type UpdateEmployeeResult =
+  | { ok: true; employee: Employee }
+  | { ok: false; status: number; message: string };

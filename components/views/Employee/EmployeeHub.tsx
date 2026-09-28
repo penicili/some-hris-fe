@@ -35,7 +35,7 @@ const moduleActions: ModuleAction[] = [
       "Daftarkan karyawan baru lengkap dengan jabatan, departemen, dan jenis kontrak.",
     href: "/karyawan/tambah",
     privileged: true,
-    ready: false,
+    ready: true,
   },
   {
     title: "Hubungkan akun",
@@ -51,7 +51,7 @@ const moduleActions: ModuleAction[] = [
       "Perbarui data karyawan, termasuk jabatan, departemen, dan status kepegawaian.",
     href: "/karyawan/ubah",
     privileged: true,
-    ready: false,
+    ready: true,
   },
 ];
 

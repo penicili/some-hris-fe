@@ -76,6 +76,15 @@ const EmployeeDetail = async ({ id }: EmployeeDetailProps) => {
         NIK {employee.nik}
       </p>
 
+      <div className="mt-6">
+        <Link
+          className="inline-flex h-10 items-center justify-center rounded-xl border border-border bg-surface px-4 text-sm font-medium text-foreground transition-colors hover:border-primary hover:text-primary"
+          href={`/karyawan/ubah/${employee.id}`}
+        >
+          Ubah data
+        </Link>
+      </div>
+
       <dl className="mt-8 grid gap-px overflow-hidden rounded-xl border border-border bg-border sm:grid-cols-2">
         <Field label="Tanggal bergabung">
           {formatHireDate(employee.hireDate)}

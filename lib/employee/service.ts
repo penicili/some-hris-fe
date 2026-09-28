@@ -7,10 +7,13 @@ import {
 } from "./schema";
 import type {
   AssignUserMutationResult,
+  CreateEmployeeResult,
   EmployeeDetailResult,
   EmployeeListResult,
   MyEmployeeResult,
+  UpdateEmployeeResult,
 } from "./types";
+import type { CreateEmployeeInput, UpdateEmployeeInput } from "./schema";
 
 
 export async function getEmployees(): Promise<EmployeeListResult> {
@@ -267,6 +270,147 @@ export async function assignUserToEmployee(input: {
       ok: false,
       status: 0,
       message: "Gagal menghubungkan akun. Coba lagi sebentar lagi.",
+    };
+  }
+}
+
+/** Creates a new employee record. */
+export async function createEmployee(
+  input: CreateEmployeeInput,
+): Promise<CreateEmployeeResult> {
+  const endpoint = getEndpoint("/employee");
+
+  if (!endpoint) {
+    return {
+      ok: false,
+      status: 0,
+      message: "BACKEND_URL belum dikonfigurasi.",
+    };
+  }
+
+  const headers = await getAuthHeaders();
+
+  try {
+    const response = await fetch(endpoint, {
+      body: JSON.stringify(input),
+      cache: "no-store",
+      headers: {
+        ...headers,
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      method: "POST",
+    });
+
+    if (response.status === 403) {
+      return {
+        ok: false,
+        status: 403,
+        message: "Akun ini tidak punya akses untuk menambah karyawan.",
+      };
+    }
+
+    const payload: unknown = await response.json().catch(() => null);
+
+    if (!response.ok) {
+      return {
+        ok: false,
+        status: response.status,
+        message: "Gagal menambah karyawan. Pastikan data sudah benar.",
+      };
+    }
+
+    const parsed = employeeDetailSchema.safeParse(payload);
+
+    if (!parsed.success) {
+      return {
+        ok: false,
+        status: response.status,
+        message: "Format data karyawan dari server tidak dikenali.",
+      };
+    }
+
+    return { ok: true, employee: parsed.data.data };
+  } catch {
+    return {
+      ok: false,
+      status: 0,
+      message: "Gagal menambah karyawan. Coba lagi sebentar lagi.",
+    };
+  }
+}
+
+/** Updates an existing employee record. */
+export async function updateEmployee(
+  id: number,
+  input: UpdateEmployeeInput,
+): Promise<UpdateEmployeeResult> {
+  const endpoint = getEndpoint(`/employee/${id}`);
+
+  if (!endpoint) {
+    return {
+      ok: false,
+      status: 0,
+      message: "BACKEND_URL belum dikonfigurasi.",
+    };
+  }
+
+  const headers = await getAuthHeaders();
+
+  try {
+    const response = await fetch(endpoint, {
+      body: JSON.stringify(input),
+      cache: "no-store",
+      headers: {
+        ...headers,
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      method: "PUT",
+    });
+
+    if (response.status === 403) {
+      return {
+        ok: false,
+        status: 403,
+        message: "Akun ini tidak punya akses untuk mengubah karyawan.",
+      };
+    }
+
+    if (response.status === 404) {
+      return {
+        ok: false,
+        status: 404,
+        message: "Karyawan tidak ditemukan.",
+      };
+    }
+
+    const payload: unknown = await response.json().catch(() => null);
+
+    if (!response.ok) {
+      return {
+        ok: false,
+        status: response.status,
+        message: "Gagal mengubah karyawan. Pastikan data sudah benar.",
+      };
+    }
+
+    const parsed = employeeDetailSchema.safeParse(payload);
+
+    if (!parsed.success) {
+      return {
+        ok: false,
+        status: response.status,
+        message: "Format data karyawan dari server tidak dikenali.",
+      };
+    }
+
+    return { ok: true, employee: parsed.data.data };
+  } catch {
+    return {
+      ok: false,
+      status: 0,
+      message: "Gagal mengubah karyawan. Coba lagi sebentar lagi.",
     };
   }
 }
