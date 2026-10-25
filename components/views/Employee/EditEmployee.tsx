@@ -1,5 +1,7 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
+import BackLink from "@/components/layouts/BackLink";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Card, CardContent } from "@/components/ui/card";
 import { getEmployee } from "@/lib/employee/service";
 import EditEmployeeForm from "./EditEmployeeForm";
 
@@ -21,16 +23,10 @@ const EditEmployee = async ({ id }: EditEmployeeProps) => {
 
     return (
       <section className="mx-auto w-full max-w-5xl px-6 py-10 md:py-14">
-        <Link
-          className="inline-flex items-center gap-2 text-xs font-medium text-muted-foreground transition-colors hover:text-primary"
-          href="/karyawan/ubah"
-        >
-          <span aria-hidden="true">←</span>
-          Kembali ke daftar karyawan
-        </Link>
-        <div className="mt-8 rounded-xl border border-border bg-surface px-5 py-10 text-center text-sm text-muted-foreground">
-          {result.message}
-        </div>
+        <BackLink href="/karyawan/ubah">Kembali ke daftar karyawan</BackLink>
+        <Alert className="mt-8" variant="destructive">
+          <AlertDescription>{result.message}</AlertDescription>
+        </Alert>
       </section>
     );
   }
@@ -39,13 +35,7 @@ const EditEmployee = async ({ id }: EditEmployeeProps) => {
 
   return (
     <section className="mx-auto w-full max-w-5xl px-6 py-10 md:py-14">
-      <Link
-        className="inline-flex items-center gap-2 text-xs font-medium text-muted-foreground transition-colors hover:text-primary"
-        href="/karyawan/ubah"
-      >
-        <span aria-hidden="true">←</span>
-        Kembali ke daftar karyawan
-      </Link>
+      <BackLink href="/karyawan/ubah">Kembali ke daftar karyawan</BackLink>
 
       <div className="mt-6 flex flex-wrap items-center gap-3">
         <h1 className="text-2xl font-bold tracking-tight">
@@ -56,9 +46,11 @@ const EditEmployee = async ({ id }: EditEmployeeProps) => {
         Perbarui data {employee.fullName}.
       </p>
 
-      <div className="mt-8 max-w-2xl rounded-xl border border-border bg-surface p-6">
-        <EditEmployeeForm employee={employee} />
-      </div>
+      <Card className="mt-8 max-w-2xl">
+        <CardContent>
+          <EditEmployeeForm employee={employee} />
+        </CardContent>
+      </Card>
     </section>
   );
 };

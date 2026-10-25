@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Button } from "@/components/ui/button";
 import type { AppNavItem } from "@/lib/navigation";
 
 type NavLinksVariant = "navbar" | "footer";
@@ -9,24 +10,6 @@ type NavLinksVariant = "navbar" | "footer";
 type NavLinksProps = {
   items: AppNavItem[];
   variant?: NavLinksVariant;
-};
-
-const variantStyles: Record<
-  NavLinksVariant,
-  { nav: string; list: string; link: string; active: string }
-> = {
-  navbar: {
-    nav: "min-w-0 flex-1 overflow-x-auto",
-    list: "flex items-center gap-5",
-    link: "whitespace-nowrap text-sm font-medium transition-colors",
-    active: "text-foreground",
-  },
-  footer: {
-    nav: "sm:justify-end",
-    list: "flex flex-wrap items-center gap-x-4 gap-y-2",
-    link: "whitespace-nowrap transition-colors",
-    active: "text-foreground",
-  },
 };
 
 function isActive(pathname: string, href: string): boolean {
@@ -44,28 +27,30 @@ export default function NavLinks({ items, variant = "navbar" }: NavLinksProps) {
     return null;
   }
 
-  const styles = variantStyles[variant];
-
   return (
     <nav
       aria-label={variant === "footer" ? "Footer" : "Primary"}
-      className={styles.nav}
+      className={variant === "footer" ? "sm:justify-end" : "min-w-0 flex-1 overflow-x-auto"}
     >
-      <ul className={styles.list}>
+      <ul className="flex items-center gap-1">
         {items.map((item) => {
           const active = isActive(pathname, item.href);
 
           return (
             <li key={item.href}>
-              <Link
-                aria-current={active ? "page" : undefined}
-                className={`${styles.link} ${
-                  active ? styles.active : "text-muted-foreground hover:text-foreground"
-                }`}
-                href={item.href}
+              <Button
+                asChild
+                size={variant === "footer" ? "xs" : "sm"}
+                variant={active ? "secondary" : "ghost"}
+                className={active ? "" : "text-muted-foreground"}
               >
-                {item.label}
-              </Link>
+                <Link
+                  aria-current={active ? "page" : undefined}
+                  href={item.href}
+                >
+                  {item.label}
+                </Link>
+              </Button>
             </li>
           );
         })}

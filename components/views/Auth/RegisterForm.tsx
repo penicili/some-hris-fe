@@ -3,6 +3,8 @@
 import { useActionState } from "react";
 import { register } from "@/app/actions/auth";
 import { initialAuthState } from "@/lib/auth/types";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
 import AuthField from "./AuthField";
 
 /**
@@ -19,7 +21,7 @@ export default function RegisterForm() {
   );
 
   return (
-    <form action={formAction} className="space-y-3">
+    <form action={formAction} className="space-y-4">
       <AuthField
         autoComplete="name"
         error={state?.fieldErrors?.name}
@@ -50,22 +52,19 @@ export default function RegisterForm() {
         type="password"
       />
 
-      {state?.message && (
-        <p
-          className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700"
-          role="alert"
-        >
-          {state.message}
-        </p>
-      )}
+      {state?.message ? (
+        <Alert variant="destructive">
+          <AlertDescription>{state.message}</AlertDescription>
+        </Alert>
+      ) : null}
 
-      <button
-        className="mt-1 flex h-12 w-full items-center justify-center rounded-xl bg-primary px-5 text-sm font-semibold text-white shadow-lg shadow-primary/20 transition-all hover:-translate-y-0.5 hover:bg-primary-hover hover:shadow-xl hover:shadow-primary/25 focus:outline-none focus:ring-4 focus:ring-primary/20 disabled:cursor-not-allowed disabled:opacity-70"
+      <Button
+        className="mt-1 h-12 w-full rounded-xl"
         disabled={pending}
         type="submit"
       >
         {pending ? "Creating account..." : "Create account"}
-      </button>
+      </Button>
     </form>
   );
 }

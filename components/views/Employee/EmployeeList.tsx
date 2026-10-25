@@ -1,4 +1,16 @@
 import Link from "next/link";
+import BackLink from "@/components/layouts/BackLink";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { getEmployees } from "@/lib/employee/service";
 import type {
   Employee,
@@ -15,9 +27,9 @@ const statusLabels: Record<EmployeeStatus, string> = {
 };
 
 const statusBadgeStyles: Record<EmployeeStatus, string> = {
-  active: "bg-primary-soft text-primary",
-  on_leave: "bg-surface-muted text-muted-foreground",
-  resigned: "border border-border bg-background text-muted-foreground",
+  active: "border-transparent bg-primary-soft text-primary",
+  on_leave: "border-transparent bg-surface-muted text-muted-foreground",
+  resigned: "text-muted-foreground",
 };
 
 const employmentLabels: Record<EmploymentStatus, string> = {
@@ -33,13 +45,7 @@ const EmployeeList = async () => {
 
   return (
     <section className="mx-auto w-full max-w-5xl px-6 py-10 md:py-14">
-      <Link
-        className="inline-flex items-center gap-2 text-xs font-medium text-muted-foreground transition-colors hover:text-primary"
-        href="/karyawan"
-      >
-        <span aria-hidden="true">←</span>
-        Kembali ke menu karyawan
-      </Link>
+      <BackLink href="/karyawan">Kembali ke menu karyawan</BackLink>
 
       <div className="mt-6 flex flex-wrap items-end justify-between gap-3">
         <div>
@@ -50,9 +56,7 @@ const EmployeeList = async () => {
         </div>
 
         {result.ok && result.employees.length > 0 ? (
-          <p className="text-sm text-muted-foreground">
-            {result.employees.length} karyawan
-          </p>
+          <Badge variant="secondary">{result.employees.length} karyawan</Badge>
         ) : null}
       </div>
 
@@ -74,83 +78,79 @@ function EmployeeTable({ employees }: { employees: Employee[] }) {
   }
 
   return (
-    <div className="overflow-hidden rounded-xl border border-border bg-surface">
-      <div className="overflow-x-auto">
-        <table className="w-full min-w-[640px] border-collapse text-left text-sm">
-          <thead>
-            <tr className="bg-surface-muted text-xs uppercase tracking-wide text-muted-foreground">
-              <th className="px-5 py-3 font-semibold" scope="col">
-                NIK
-              </th>
-              <th className="px-5 py-3 font-semibold" scope="col">
-                Nama
-              </th>
-              <th className="px-5 py-3 font-semibold" scope="col">
-                Tanggal Bergabung
-              </th>
-              <th className="px-5 py-3 font-semibold" scope="col">
-                Kontrak
-              </th>
-              <th className="px-5 py-3 font-semibold" scope="col">
-                Status
-              </th>
-              <th className="px-5 py-3 font-semibold" scope="col">
-                <span className="sr-only">Aksi</span>
-              </th>
-            </tr>
-          </thead>
+    <Card className="overflow-hidden py-0">
+      <Table className="min-w-[640px]">
+        <TableHeader className="bg-muted/50">
+          <TableRow>
+            <TableHead className="px-5 py-3 text-xs uppercase tracking-wide text-muted-foreground">
+              NIK
+            </TableHead>
+            <TableHead className="px-5 py-3 text-xs uppercase tracking-wide text-muted-foreground">
+              Nama
+            </TableHead>
+            <TableHead className="px-5 py-3 text-xs uppercase tracking-wide text-muted-foreground">
+              Tanggal Bergabung
+            </TableHead>
+            <TableHead className="px-5 py-3 text-xs uppercase tracking-wide text-muted-foreground">
+              Kontrak
+            </TableHead>
+            <TableHead className="px-5 py-3 text-xs uppercase tracking-wide text-muted-foreground">
+              Status
+            </TableHead>
+            <TableHead className="px-5 py-3 text-right text-xs uppercase tracking-wide text-muted-foreground">
+              Aksi
+            </TableHead>
+          </TableRow>
+        </TableHeader>
 
-          <tbody className="divide-y divide-border">
-            {employees.map((employee) => (
-              <tr key={employee.id}>
-                <td className="whitespace-nowrap px-5 py-4 font-mono text-xs text-muted-foreground">
-                  {employee.nik}
-                </td>
-                <td className="px-5 py-4 font-medium">
-                  <Link
-                    className="text-foreground transition-colors hover:text-primary"
-                    href={`/karyawan/${employee.id}`}
-                  >
-                    {employee.fullName}
-                  </Link>
-                </td>
-                <td className="whitespace-nowrap px-5 py-4 text-muted-foreground">
-                  {formatHireDate(employee.hireDate)}
-                </td>
-                <td className="whitespace-nowrap px-5 py-4 text-muted-foreground">
-                  {employee.employment
-                    ? employmentLabels[employee.employment]
-                    : "—"}
-                </td>
-                <td className="px-5 py-4">
-                  <span
-                    className={`inline-block whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-medium ${statusBadgeStyles[employee.status]}`}
-                  >
-                    {statusLabels[employee.status]}
-                  </span>
-                </td>
-                <td className="px-5 py-4 text-right">
-                  <Link
-                    className="text-sm font-medium text-primary transition-colors hover:text-primary-hover"
-                    href={`/karyawan/ubah/${employee.id}`}
-                  >
-                    Ubah
-                  </Link>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
+        <TableBody>
+          {employees.map((employee) => (
+            <TableRow key={employee.id}>
+              <TableCell className="px-5 py-4 font-mono text-xs text-muted-foreground">
+                {employee.nik}
+              </TableCell>
+              <TableCell className="px-5 py-4 font-medium">
+                <Link
+                  className="text-foreground transition-colors hover:text-primary"
+                  href={`/karyawan/${employee.id}`}
+                >
+                  {employee.fullName}
+                </Link>
+              </TableCell>
+              <TableCell className="px-5 py-4 text-muted-foreground">
+                {formatHireDate(employee.hireDate)}
+              </TableCell>
+              <TableCell className="px-5 py-4 text-muted-foreground">
+                {employee.employment
+                  ? employmentLabels[employee.employment]
+                  : "—"}
+              </TableCell>
+              <TableCell className="px-5 py-4">
+                <Badge
+                  className={statusBadgeStyles[employee.status]}
+                  variant="outline"
+                >
+                  {statusLabels[employee.status]}
+                </Badge>
+              </TableCell>
+              <TableCell className="px-5 py-4 text-right">
+                <Button asChild className="h-auto p-0" variant="link">
+                  <Link href={`/karyawan/ubah/${employee.id}`}>Ubah</Link>
+                </Button>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </Card>
   );
 }
 
 function Notice({ message }: { message: string }) {
   return (
-    <div className="rounded-xl border border-border bg-surface px-5 py-10 text-center text-sm text-muted-foreground">
+    <Card className="px-5 py-10 text-center text-sm text-muted-foreground">
       {message}
-    </div>
+    </Card>
   );
 }
 

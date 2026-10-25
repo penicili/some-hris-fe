@@ -1,6 +1,8 @@
 import Image from "next/image";
 import type { ReactNode } from "react";
 import Link from "next/link";
+import { ArrowUpRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { COMPANY_NAME } from "@/lib/config";
 
 type AuthLayoutUIProps = {
@@ -27,21 +29,15 @@ function AuthVisual({ src, alt }: { src: string; alt: string }) {
 
 function FormPanel({ children }: { children: ReactNode }) {
   return (
-    <div className="flex min-h-[560px] flex-col bg-surface px-6 py-7 sm:px-10 lg:min-h-screen lg:px-16 lg:py-8 xl:px-24">
+    <div className="flex min-h-[560px] flex-col bg-card px-6 py-7 sm:px-10 lg:min-h-screen lg:px-16 lg:py-8 xl:px-24">
       <div className="mx-auto flex w-full max-w-[470px] flex-1 flex-col">
         <div className="flex justify-end">
-          <Link
-            className="group inline-flex items-center gap-2 text-xs font-medium text-muted-foreground transition-colors hover:text-primary"
-            href="/"
-          >
-            Back to home
-            <span
-              aria-hidden="true"
-              className="transition-transform group-hover:translate-x-0.5"
-            >
-              ↗
-            </span>
-          </Link>
+          <Button asChild size="sm" variant="ghost">
+            <Link href="/">
+              Back to home
+              <ArrowUpRight />
+            </Link>
+          </Button>
         </div>
 
         <div className="flex flex-1 items-center py-10 lg:py-8">{children}</div>

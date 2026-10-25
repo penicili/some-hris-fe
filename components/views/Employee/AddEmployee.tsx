@@ -1,16 +1,11 @@
-import Link from "next/link";
+import BackLink from "@/components/layouts/BackLink";
+import { Card, CardContent } from "@/components/ui/card";
 import AddEmployeeForm from "./AddEmployeeForm";
 
 const AddEmployee = () => {
   return (
     <section className="mx-auto w-full max-w-5xl px-6 py-10 md:py-14">
-      <Link
-        className="inline-flex items-center gap-2 text-xs font-medium text-muted-foreground transition-colors hover:text-primary"
-        href="/karyawan"
-      >
-        <span aria-hidden="true">←</span>
-        Kembali ke menu karyawan
-      </Link>
+      <BackLink href="/karyawan">Kembali ke menu karyawan</BackLink>
 
       <h1 className="mt-6 text-2xl font-bold tracking-tight">
         Tambah karyawan
@@ -20,9 +15,11 @@ const AddEmployee = () => {
         kontrak.
       </p>
 
-      <div className="mt-8 max-w-2xl rounded-xl border border-border bg-surface p-6">
-        <AddEmployeeForm />
-      </div>
+      <Card className="mt-8 max-w-2xl">
+        <CardContent>
+          <AddEmployeeForm />
+        </CardContent>
+      </Card>
     </section>
   );
 };

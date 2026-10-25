@@ -1,3 +1,4 @@
+import { Card, CardContent } from "@/components/ui/card";
 import { HR_MODULES } from "@/lib/navigation";
 
 /**
@@ -17,19 +18,18 @@ export default function Home() {
         </p>
       </section>
 
-      <section className="border-t border-border bg-surface">
+      <section className="border-t border-border bg-card">
         <div className="mx-auto w-full max-w-5xl px-6 py-14">
           <h2 className="text-sm font-semibold text-muted-foreground">Modul HR</h2>
-          <ul className="mt-6 grid gap-px overflow-hidden rounded-xl border border-border bg-border sm:grid-cols-2 lg:grid-cols-5">
+          <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
             {HR_MODULES.map((module) => (
-              <li
-                className="bg-background px-5 py-4 text-sm font-medium"
-                key={module.href}
-              >
-                {module.label}
-              </li>
+              <Card className="py-0" key={module.href}>
+                <CardContent className="px-5 py-4 text-sm font-medium">
+                  {module.label}
+                </CardContent>
+              </Card>
             ))}
-          </ul>
+          </div>
         </div>
       </section>
     </>

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import AuthLayoutUI from "@/components/layouts/AuthLayoutUI";
+import { Button } from "@/components/ui/button";
 import RegisterForm from "@/components/views/Auth/RegisterForm";
 
 const Register = () => {
@@ -27,12 +28,9 @@ const Register = () => {
 
         <p className="mt-5 text-center text-sm text-muted-foreground">
           Already have an account?{" "}
-          <Link
-            className="font-semibold text-primary transition-colors hover:text-primary-hover"
-            href="/login"
-          >
-            Sign in
-          </Link>
+          <Button asChild className="h-auto p-0 font-semibold" variant="link">
+            <Link href="/login">Sign in</Link>
+          </Button>
         </p>
       </div>
     </AuthLayoutUI>

@@ -1,4 +1,7 @@
 import Link from "next/link";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
 import { canManageEmployees } from "@/lib/auth/access";
 import { getCurrentUser } from "@/lib/auth/session";
 
@@ -75,54 +78,52 @@ const EmployeeHub = async () => {
       </p>
 
       {!canManage ? (
-        <p className="mt-4 rounded-lg border border-border bg-surface-muted px-4 py-3 text-sm text-muted-foreground">
-          Sebagian menu hanya tersedia untuk akun admin, eksekutif, dan
-          manajemen.
-        </p>
+        <Alert className="mt-4">
+          <AlertDescription>
+            Sebagian menu hanya tersedia untuk akun admin, eksekutif, dan
+            manajemen.
+          </AlertDescription>
+        </Alert>
       ) : null}
 
       {visibleActions.length > 0 ? (
-        <ul
-          className={`mt-8 grid gap-px overflow-hidden rounded-xl border border-border bg-border ${
-            // One card fills the row, otherwise the trailing cell would show
-            // the container background as an empty panel.
-            visibleActions.length > 1 ? "sm:grid-cols-2" : ""
-            }`}
-        >
+        <ul className="mt-8 grid gap-3 sm:grid-cols-2">
           {visibleActions.map((action) => (
-            <li className="bg-background" key={action.href}>
+            <li key={action.href}>
               {action.ready ? (
-                <Link
-                  className="flex h-full flex-col p-5 transition-colors hover:bg-surface"
-                  href={action.href}
-                >
-                  <span className="text-sm font-semibold text-foreground">
-                    {action.title}
-                  </span>
-                  <span className="mt-2 text-sm leading-6 text-muted-foreground">
-                    {action.description}
-                  </span>
-                </Link>
-              ) : (
-                <div className="flex h-full flex-col p-5">
-                  <span className="flex items-center gap-2 text-sm font-semibold text-muted-foreground">
-                    {action.title}
-                    <span className="rounded-full bg-surface-muted px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
-                      Segera
+                <Card className="h-full py-0 transition-colors hover:bg-muted/50">
+                  <Link
+                    className="flex h-full flex-col p-5"
+                    href={action.href}
+                  >
+                    <span className="text-sm font-semibold text-foreground">
+                      {action.title}
                     </span>
-                  </span>
-                  <span className="mt-2 text-sm leading-6 text-muted-foreground">
-                    {action.description}
-                  </span>
-                </div>
+                    <span className="mt-2 text-sm leading-6 text-muted-foreground">
+                      {action.description}
+                    </span>
+                  </Link>
+                </Card>
+              ) : (
+                <Card className="h-full py-0">
+                  <div className="flex h-full flex-col p-5">
+                    <span className="flex items-center gap-2 text-sm font-semibold text-muted-foreground">
+                      {action.title}
+                      <Badge variant="secondary">Segera</Badge>
+                    </span>
+                    <span className="mt-2 text-sm leading-6 text-muted-foreground">
+                      {action.description}
+                    </span>
+                  </div>
+                </Card>
               )}
             </li>
           ))}
         </ul>
       ) : (
-        <p className="mt-8 rounded-xl border border-border bg-surface px-5 py-10 text-center text-sm text-muted-foreground">
+        <Card className="mt-8 px-5 py-10 text-center text-sm text-muted-foreground">
           Tidak ada menu yang tersedia untuk akun ini.
-        </p>
+        </Card>
       )}
     </section>
   );

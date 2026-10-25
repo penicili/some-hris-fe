@@ -1,4 +1,14 @@
 import Link from "next/link";
+import BackLink from "@/components/layouts/BackLink";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { getMyEmployee } from "@/lib/employee/service";
 import type {
   Employee,
@@ -21,9 +31,9 @@ const statusLabels: Record<EmployeeStatus, string> = {
 };
 
 const statusBadgeStyles: Record<EmployeeStatus, string> = {
-  active: "bg-primary-soft text-primary",
-  on_leave: "bg-surface-muted text-muted-foreground",
-  resigned: "border border-border bg-background text-muted-foreground",
+  active: "border-transparent bg-primary-soft text-primary",
+  on_leave: "border-transparent bg-surface-muted text-muted-foreground",
+  resigned: "text-muted-foreground",
 };
 
 const employmentLabels: Record<EmploymentStatus, string> = {
@@ -46,40 +56,39 @@ const MyEmployee = async () => {
 
   return (
     <section className="mx-auto w-full max-w-5xl px-6 py-10 md:py-14">
-      <Link
-        className="inline-flex items-center gap-2 text-xs font-medium text-muted-foreground transition-colors hover:text-primary"
-        href="/karyawan"
-      >
-        <span aria-hidden="true">←</span>
-        Kembali ke menu karyawan
-      </Link>
+      <BackLink href="/karyawan">Kembali ke menu karyawan</BackLink>
 
       <h1 className="mt-6 text-2xl font-bold tracking-tight">Data saya</h1>
 
       {!result.ok ? (
-        <div className="mt-8 rounded-xl border border-border bg-surface px-5 py-10 text-center text-sm text-muted-foreground">
-          {result.message}
-        </div>
+        <Alert className="mt-8" variant="destructive">
+          <AlertDescription>{result.message}</AlertDescription>
+        </Alert>
       ) : !result.employee ? (
-        <div className="mt-8 rounded-xl border border-border bg-surface px-5 py-10 text-center">
-          <p className="text-sm text-foreground">
-            Akun ini belum terhubung dengan data karyawan.
-          </p>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Hubungkan lewat menu Hubungkan akun agar data payroll dan absensi
-            bisa tertaut ke akun kamu.
-          </p>
-        </div>
+        <Card className="mt-8">
+          <CardHeader>
+            <CardTitle>Akun belum terhubung</CardTitle>
+            <CardDescription>
+              Hubungkan lewat menu Hubungkan akun agar data payroll dan absensi
+              bisa tertaut ke akun kamu.
+            </CardDescription>
+            <div className="mt-2">
+              <Button asChild size="sm" variant="outline">
+                <Link href="/karyawan/hubungkan-akun">Hubungkan akun</Link>
+              </Button>
+            </div>
+          </CardHeader>
+        </Card>
       ) : (
         <>
           {result.account ? (
-            <dl className="mt-8 grid gap-px overflow-hidden rounded-xl border border-border bg-border sm:grid-cols-3">
+            <div className="mt-8 grid gap-3 sm:grid-cols-3">
               <Field label="Nama akun">{result.account.name}</Field>
               <Field label="Email">{result.account.email}</Field>
               <Field label="Peran">
                 {roleLabels[result.account.role] ?? result.account.role}
               </Field>
-            </dl>
+            </div>
           ) : null}
 
           <EmployeeFields employee={result.employee} />
@@ -91,16 +100,17 @@ const MyEmployee = async () => {
 
 export function EmployeeFields({ employee }: { employee: Employee }) {
   return (
-    <dl className="mt-4 grid gap-px overflow-hidden rounded-xl border border-border bg-border sm:grid-cols-2">
+    <div className="mt-4 grid gap-3 sm:grid-cols-2">
       <Field label="NIK">
         <span className="font-mono text-xs">{employee.nik}</span>
       </Field>
       <Field label="Status">
-        <span
-          className={`inline-block rounded-full px-2.5 py-1 text-xs font-medium ${statusBadgeStyles[employee.status]}`}
+        <Badge
+          className={statusBadgeStyles[employee.status]}
+          variant="outline"
         >
           {statusLabels[employee.status]}
-        </span>
+        </Badge>
       </Field>
       <Field label="Tanggal bergabung">{formatHireDate(employee.hireDate)}</Field>
       <Field label="Jenis kontrak">
@@ -110,18 +120,20 @@ export function EmployeeFields({ employee }: { employee: Employee }) {
       <Field label="ID departemen">
         {employee.departmentId ? `#${employee.departmentId}` : "Belum diisi"}
       </Field>
-    </dl>
+    </div>
   );
 }
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <div className="bg-background px-5 py-4">
-      <dt className="text-xs uppercase tracking-wide text-muted-foreground">
-        {label}
-      </dt>
-      <dd className="mt-1.5 text-sm text-foreground">{children}</dd>
-    </div>
+    <Card className="gap-1 py-3" size="sm">
+      <CardHeader>
+        <CardDescription className="text-xs uppercase tracking-wide">
+          {label}
+        </CardDescription>
+        <CardTitle className="text-sm font-normal">{children}</CardTitle>
+      </CardHeader>
+    </Card>
   );
 }
 

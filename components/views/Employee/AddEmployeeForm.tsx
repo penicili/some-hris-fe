@@ -4,6 +4,17 @@ import Link from "next/link";
 import { useActionState } from "react";
 import { createEmployeeAction } from "@/app/actions/employees";
 import { initialCreateEmployeeState } from "@/lib/employee/types";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const statusOptions = [
   { value: "active", label: "Aktif" },
@@ -52,6 +63,7 @@ export default function AddEmployeeForm() {
         />
 
         <SelectField
+          defaultValue="active"
           error={state?.fieldErrors?.status}
           id="status"
           label="Status"
@@ -98,34 +110,27 @@ export default function AddEmployeeForm() {
       </div>
 
       {state?.message ? (
-        <p
-          className={`rounded-lg px-3 py-2 text-sm ${
+        <Alert
+          className={
             state.status === "success"
-              ? "bg-primary-soft text-primary"
-              : "bg-red-50 text-red-700"
-          }`}
-          role="alert"
+              ? "border-primary/30 bg-primary-soft text-primary"
+              : undefined
+          }
+          variant={state.status === "success" ? "default" : "destructive"}
         >
-          {state.message}
-        </p>
+          <AlertDescription>{state.message}</AlertDescription>
+        </Alert>
       ) : null}
 
       <div className="flex flex-wrap items-center gap-4 pt-1">
-        <button
-          className="flex h-12 items-center justify-center rounded-xl bg-primary px-5 text-sm font-semibold text-white transition-colors hover:bg-primary-hover focus:outline-none focus:ring-4 focus:ring-primary/20 disabled:cursor-not-allowed disabled:opacity-70"
-          disabled={pending}
-          type="submit"
-        >
+        <Button className="h-12 rounded-xl px-5" disabled={pending} type="submit">
           {pending ? "Menyimpan..." : "Tambah karyawan"}
-        </button>
+        </Button>
 
         {state.status === "success" ? (
-          <Link
-            className="text-sm font-medium text-primary transition-colors hover:text-primary-hover"
-            href="/karyawan/daftar"
-          >
-            Lihat daftar karyawan
-          </Link>
+          <Button asChild className="h-auto p-0" variant="link">
+            <Link href="/karyawan/daftar">Lihat daftar karyawan</Link>
+          </Button>
         ) : null}
       </div>
     </form>
@@ -152,20 +157,20 @@ function Field({
   optional = false,
 }: FieldProps) {
   return (
-    <div>
-      <label className="text-sm font-medium text-foreground" htmlFor={id}>
+    <div className="space-y-2">
+      <Label htmlFor={id}>
         {label}
         {optional ? (
-          <span className="ml-1 text-xs font-normal text-muted-foreground">
+          <span className="text-xs font-normal text-muted-foreground">
             (opsional)
           </span>
         ) : null}
-      </label>
+      </Label>
 
-      <input
+      <Input
         aria-describedby={error ? `${id}-error` : undefined}
         aria-invalid={error ? true : undefined}
-        className="mt-2 h-12 w-full rounded-xl border border-border bg-surface px-4 text-sm text-foreground outline-none transition placeholder:text-muted-foreground/70 focus:border-primary focus:ring-4 focus:ring-primary/10"
+        className="h-12"
         id={id}
         name={name}
         placeholder={placeholder}
@@ -174,7 +179,7 @@ function Field({
       />
 
       {error ? (
-        <p className="mt-2 text-xs text-red-700" id={`${id}-error`} role="alert">
+        <p className="text-xs text-destructive" id={`${id}-error`} role="alert">
           {error}
         </p>
       ) : null}
@@ -187,6 +192,7 @@ type SelectFieldProps = {
   name: string;
   label: string;
   options: { value: string; label: string }[];
+  defaultValue?: string;
   error?: string;
   optional?: boolean;
 };
@@ -196,38 +202,41 @@ function SelectField({
   name,
   label,
   options,
+  defaultValue,
   error,
   optional = false,
 }: SelectFieldProps) {
   return (
-    <div>
-      <label className="text-sm font-medium text-foreground" htmlFor={id}>
+    <div className="space-y-2">
+      <Label htmlFor={id}>
         {label}
         {optional ? (
-          <span className="ml-1 text-xs font-normal text-muted-foreground">
+          <span className="text-xs font-normal text-muted-foreground">
             (opsional)
           </span>
         ) : null}
-      </label>
+      </Label>
 
-      <select
-        aria-describedby={error ? `${id}-error` : undefined}
-        aria-invalid={error ? true : undefined}
-        className="mt-2 h-12 w-full rounded-xl border border-border bg-surface px-4 text-sm text-foreground outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/10"
-        id={id}
-        name={name}
-        required={!optional}
-      >
-        {optional ? <option value="">Pilih...</option> : null}
-        {options.map((option) => (
-          <option key={option.value} value={option.value}>
-            {option.label}
-          </option>
-        ))}
-      </select>
+      <Select defaultValue={defaultValue} name={name} required={!optional}>
+        <SelectTrigger
+          aria-describedby={error ? `${id}-error` : undefined}
+          aria-invalid={error ? true : undefined}
+          className="h-12 w-full data-[size=default]:h-12"
+          id={id}
+        >
+          <SelectValue placeholder="Pilih..." />
+        </SelectTrigger>
+        <SelectContent>
+          {options.map((option) => (
+            <SelectItem key={option.value} value={option.value}>
+              {option.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
 
       {error ? (
-        <p className="mt-2 text-xs text-red-700" id={`${id}-error`} role="alert">
+        <p className="text-xs text-destructive" id={`${id}-error`} role="alert">
           {error}
         </p>
       ) : null}

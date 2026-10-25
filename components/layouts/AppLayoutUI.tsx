@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import LogoutButton from "@/components/views/Auth/LogoutButton";
 import NavLinks from "@/components/layouts/NavLinks";
+import { Separator } from "@/components/ui/separator";
 import { COMPANY_NAME } from "@/lib/config";
 import type { AppNavItem } from "@/lib/navigation";
 
@@ -25,14 +26,16 @@ export default function AppLayoutUI({
   return (
     <div className="flex min-h-screen flex-col bg-background text-foreground">
       {/* Navbar */}
-      <header className="sticky top-0 z-20 border-b border-border bg-surface">
-        <div className="mx-auto flex w-full max-w-5xl items-center gap-6 px-6 py-4">
+      <header className="sticky top-0 z-20 border-b border-border bg-card/95 backdrop-blur">
+        <div className="mx-auto flex w-full max-w-5xl items-center gap-4 px-6 py-3">
           <Link
             className="shrink-0 text-sm font-semibold tracking-tight text-foreground"
             href="/"
           >
             HRIS
           </Link>
+
+          <Separator className="hidden h-6 sm:block" orientation="vertical" />
 
           <NavLinks items={navItems} />
 
@@ -56,7 +59,7 @@ export default function AppLayoutUI({
       <main className="flex-1">{children}</main>
 
       {/* Footer */}
-      <footer className="border-t border-border bg-surface">
+      <footer className="border-t border-border bg-card">
         <div className="mx-auto flex w-full max-w-5xl flex-col gap-3 px-6 py-6 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
           <p>
             &copy; 2026 {COMPANY_NAME}

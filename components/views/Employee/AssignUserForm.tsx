@@ -4,6 +4,10 @@ import Link from "next/link";
 import { useActionState } from "react";
 import { assignUser } from "@/app/actions/employees";
 import { initialAssignUserState } from "@/lib/employee/types";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 /**
  * Client-side part of the assign-user form.
@@ -48,34 +52,27 @@ export default function AssignUserForm() {
       />
 
       {state?.message ? (
-        <p
-          className={`rounded-lg px-3 py-2 text-sm ${
+        <Alert
+          className={
             state.status === "success"
-              ? "bg-primary-soft text-primary"
-              : "bg-red-50 text-red-700"
-          }`}
-          role="alert"
+              ? "border-primary/30 bg-primary-soft text-primary"
+              : undefined
+          }
+          variant={state.status === "success" ? "default" : "destructive"}
         >
-          {state.message}
-        </p>
+          <AlertDescription>{state.message}</AlertDescription>
+        </Alert>
       ) : null}
 
       <div className="flex flex-wrap items-center gap-4 pt-1">
-        <button
-          className="flex h-12 items-center justify-center rounded-xl bg-primary px-5 text-sm font-semibold text-white transition-colors hover:bg-primary-hover focus:outline-none focus:ring-4 focus:ring-primary/20 disabled:cursor-not-allowed disabled:opacity-70"
-          disabled={pending}
-          type="submit"
-        >
+        <Button className="h-12 rounded-xl px-5" disabled={pending} type="submit">
           {pending ? "Menghubungkan..." : "Hubungkan akun"}
-        </button>
+        </Button>
 
         {state.status === "success" ? (
-          <Link
-            className="text-sm font-medium text-primary transition-colors hover:text-primary-hover"
-            href="/karyawan/daftar"
-          >
-            Lihat daftar karyawan
-          </Link>
+          <Button asChild className="h-auto p-0" variant="link">
+            <Link href="/karyawan/daftar">Lihat daftar karyawan</Link>
+          </Button>
         ) : null}
       </div>
     </form>
@@ -102,15 +99,13 @@ function Field({
   type = "text",
 }: FieldProps) {
   return (
-    <div>
-      <label className="text-sm font-medium text-foreground" htmlFor={id}>
-        {label}
-      </label>
+    <div className="space-y-2">
+      <Label htmlFor={id}>{label}</Label>
 
-      <input
+      <Input
         aria-describedby={error ? `${id}-error` : hint ? `${id}-hint` : undefined}
         aria-invalid={error ? true : undefined}
-        className="mt-2 h-12 w-full rounded-xl border border-border bg-surface px-4 text-sm text-foreground outline-none transition placeholder:text-muted-foreground/70 focus:border-primary focus:ring-4 focus:ring-primary/10"
+        className="h-12"
         id={id}
         name={name}
         placeholder={placeholder}
@@ -119,15 +114,11 @@ function Field({
       />
 
       {error ? (
-        <p
-          className="mt-2 text-xs text-red-700"
-          id={`${id}-error`}
-          role="alert"
-        >
+        <p className="text-xs text-destructive" id={`${id}-error`} role="alert">
           {error}
         </p>
       ) : hint ? (
-        <p className="mt-2 text-xs text-muted-foreground" id={`${id}-hint`}>
+        <p className="text-xs text-muted-foreground" id={`${id}-hint`}>
           {hint}
         </p>
       ) : null}

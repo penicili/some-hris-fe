@@ -1,4 +1,7 @@
 import type { HTMLInputTypeAttribute } from "react";
+import { Lock, Mail, UserRound, type LucideIcon } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 type AuthFieldProps = {
   id: string;
@@ -12,78 +15,11 @@ type AuthFieldProps = {
   error?: string;
 };
 
-function FieldIcon({ name }: { name: AuthFieldProps["icon"] }) {
-  const iconClassName = "h-5 w-5";
-
-  if (name === "email") {
-    return (
-      <svg
-        aria-hidden="true"
-        className={iconClassName}
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-        strokeWidth="1.8"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M3.75 6.75A2.25 2.25 0 0 1 6 4.5h12a2.25 2.25 0 0 1 2.25 2.25v10.5A2.25 2.25 0 0 1 18 19.5H6a2.25 2.25 0 0 1-2.25-2.25V6.75Z"
-        />
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="m4.5 7.25 6.12 4.59a2.25 2.25 0 0 0 2.76 0l6.12-4.59"
-        />
-      </svg>
-    );
-  }
-
-  if (name === "lock") {
-    return (
-      <svg
-        aria-hidden="true"
-        className={iconClassName}
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-        strokeWidth="1.8"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M6.75 10.5V8.25a5.25 5.25 0 0 1 10.5 0v2.25"
-        />
-        <rect
-          x="4.5"
-          y="10.5"
-          width="15"
-          height="10"
-          rx="2.25"
-        />
-        <path strokeLinecap="round" d="M12 14.25v2.25" />
-      </svg>
-    );
-  }
-
-  return (
-    <svg
-      aria-hidden="true"
-      className={iconClassName}
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke="currentColor"
-      strokeWidth="1.8"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M15.75 20.25v-1.5a3.75 3.75 0 0 0-3.75-3.75h-3a3.75 3.75 0 0 0-3.75 3.75v1.5"
-      />
-      <circle cx="10.5" cy="7.5" r="3.75" />
-    </svg>
-  );
-}
+const fieldIcons: Record<AuthFieldProps["icon"], LucideIcon> = {
+  email: Mail,
+  lock: Lock,
+  name: UserRound,
+};
 
 export default function AuthField({
   id,
@@ -96,23 +32,20 @@ export default function AuthField({
   required = true,
   error,
 }: AuthFieldProps) {
+  const Icon = fieldIcons[icon];
+
   return (
-    <div>
-      <label
-        className="text-sm font-medium text-foreground"
-        htmlFor={id}
-      >
-        {label}
-      </label>
-      <div className="relative mt-2">
+    <div className="space-y-2">
+      <Label htmlFor={id}>{label}</Label>
+      <div className="relative">
         <span className="pointer-events-none absolute inset-y-0 left-0 flex w-11 items-center justify-center text-muted-foreground">
-          <FieldIcon name={icon} />
+          <Icon aria-hidden="true" className="size-5" />
         </span>
-        <input
+        <Input
           aria-describedby={error ? `${id}-error` : undefined}
           aria-invalid={error ? true : undefined}
           autoComplete={autoComplete}
-          className="h-12 w-full rounded-xl border border-border bg-surface pl-11 pr-4 text-sm text-foreground outline-none transition placeholder:text-muted-foreground/70 focus:border-primary focus:ring-4 focus:ring-primary/10"
+          className="h-12 pl-11 text-sm"
           id={id}
           name={name}
           placeholder={placeholder}
@@ -120,15 +53,15 @@ export default function AuthField({
           type={type}
         />
       </div>
-      {error && (
+      {error ? (
         <p
-          className="mt-2 text-xs text-red-700"
+          className="text-xs text-destructive"
           id={`${id}-error`}
           role="alert"
         >
           {error}
         </p>
-      )}
+      ) : null}
     </div>
   );
 }
